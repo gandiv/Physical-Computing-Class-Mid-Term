@@ -1,5 +1,14 @@
 /*
-This is the Arduino bit of the project
+
+ Mid Term
+ Mudassir Mohammed, Parth Soni
+ DIGF 2B03 Physical Computing S01
+ OCAD University
+ Created on [Jan 8th 2015]
+ 
+ Based on:
+ a touch of imagination and lots of Googling! 
+
 */
 #include <Servo.h> 
 
@@ -9,7 +18,7 @@ const int pos_1 =125; // Number of used position in the first dialogue
 const int pos_2 = 110; // NUmber of servo movements in second dialogue
 const int pos_3 = 25; // Number of Servo Movements in the third dialogue
 const int maxRot = 179; //Maximum Servo Rotation
-const int minRot = 150; // Minimum Servo Rotation
+const int minRot = 130; // Minimum Servo Rotation
 int servoPos [total_pos]  ;
 
 char val ; // Values recieed from Processing
@@ -29,12 +38,12 @@ int ringFinger; // Ring Finger Sensor Vals
 boolean firstMovement = false; // This is the First Movement of mouth
 boolean secondMovement = false;  // This is the Second Movement of the mouth
 boolean thirdMovement = false; // This is the Third Movement of the mouth
-
+int ringMap;
 void setup(){
   
 Serial.begin (9600);
 lips.attach (9);//Servo Attach
-pinMode (gameStartPin, INPUT_PULLUP); // POT Switch
+pinMode (gameStartPin, INPUT); // POT Switch
 pinMode (speakerPin, OUTPUT); // Speaker
 pinMode (rockLED,OUTPUT); // Rock LED
 pinMode (paperLED,OUTPUT); // Paper LED
@@ -46,13 +55,15 @@ lips.write(180); // Initial Mouth Position (Keep it closed, just incase flies sn
 void loop() {
   
    gameStart = digitalRead (gameStartPin) ; // To see if the user has started the game
-
+//  println(gameStart);
   // The Game Starts
   if (gameStart == HIGH) {
     val = Serial.read();
     
     talkingPart(); // Move the Servo
     indexFinger = analogRead(indexFingerPin); // Checks for index finger bend
+  ringFinger = analogRead(ringFingerPin);
+  ringMap = map(ringFinger,726,822,980,1008);
     parsingSerial(); // Send the sensor Value data
     delay (125); // Have some Sensor Value Delay
     
@@ -162,5 +173,8 @@ void parsingSerial () {
   // Pass all of the beautiful data to processing
     Serial.print(gameStart);
     Serial.print(",");
-    Serial.println (indexFinger);
+    Serial.print (indexFinger);
+    Serial.print(",");
+    Serial.println (ringMap);
+
 }
